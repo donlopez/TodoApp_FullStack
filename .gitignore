@@ -36,3 +36,21 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+cat > .gitignore << 'EOF'
+# IntelliJ
+.idea/
+*.iml
+out/
+target/
+*.class
+
+# Logs and temporary files
+*.log
+*.tmp
+.DS_Store
+
+# Maven wrapper
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+EOF
