@@ -102,8 +102,6 @@ Before running, create a **MySQL database** and update your local configuration:
 
 ![Screenshot of the TodoApp](assets/todo_list_preview.png)
 
-*(Add your screenshot to `/assets/` and update this path to the correct filename.)*
-
 ---
 
 ## 🧠 Notes
