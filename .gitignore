@@ -1,18 +1,22 @@
+# ===== Build output =====
 target/
-!.mvn/wrapper/maven-wrapper.jar
+out/
 !**/src/main/**/target/
 !**/src/test/**/target/
+!/.mvn/wrapper/maven-wrapper.jar
+*.class
 
-### IntelliJ IDEA ###
+# ===== IntelliJ IDEA =====
+.idea/
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
-*.iws
 *.iml
 *.ipr
+*.iws
 
-### Eclipse ###
+# ===== Eclipse =====
 .apt_generated
 .classpath
 .factorypath
@@ -21,7 +25,7 @@ target/
 .springBeans
 .sts4-cache
 
-### NetBeans ###
+# ===== NetBeans =====
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -31,26 +35,23 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# ===== VS Code =====
 .vscode/
 
-### Mac OS ###
+# ===== Mac OS =====
 .DS_Store
 
-cat > .gitignore << 'EOF'
-# IntelliJ
-.idea/
-*.iml
-out/
-target/
-*.class
-
-# Logs and temporary files
+# ===== Logs / temp files =====
 *.log
 *.tmp
-.DS_Store
 
-# Maven wrapper
+# ===== Maven Wrapper =====
 .mvn/
 !/.mvn/wrapper/maven-wrapper.jar
-EOF
+
+# ===== Sensitive / local config =====
+# Exclude real DB configs and secret environment files
+src/main/resources/hibernate.cfg.xml
+src/main/resources/*.local.cfg.xml
+*.env
+.env*
