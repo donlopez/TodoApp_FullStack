@@ -100,7 +100,7 @@ Before running, create a **MySQL database** and update your local configuration:
 
 ## 🖼️ Preview
 
-![Screenshot of the TodoApp](assets/screenshot.png)
+![Screenshot of the TodoApp](assets/todo_list_preview.png)
 
 *(Add your screenshot to `/assets/` and update this path to the correct filename.)*
 
@@ -120,5 +120,3 @@ Before running, create a **MySQL database** and update your local configuration:
 * **Julio Lopez**
 * 🌐 [lopezbio.com](https://lopezbio.com)
 * 💼 [LinkedIn](https://www.linkedin.com/in/julio-lopez-380937282/)
-
-
