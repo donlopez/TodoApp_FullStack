@@ -4,40 +4,83 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title><c:choose><c:when test="${empty item}">New</c:when><c:otherwise>Edit</c:otherwise></c:choose> Todo</title>
-    <style>
-        label { display:block; margin: 8px 0 4px; }
-        input[type=text] { width: 480px; padding: 6px; }
-        .row { margin: 10px 0; }
-        .button { padding: 6px 12px; }
-    </style>
+    <title>
+        <c:choose>
+            <c:when test="${empty item}">New</c:when>
+            <c:otherwise>Edit</c:otherwise>
+        </c:choose>
+        Todo
+    </title>
+    <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
 </head>
 <body>
-<h1><c:choose><c:when test="${empty item}">New</c:when><c:otherwise>Edit</c:otherwise></c:choose> Todo</h1>
+<div class="layout">
+    <%@ include file="menu.jspf" %>
 
-<form method="post" action="<c:url value='/todos'/>">
-    <c:if test="${not empty item}">
-        <input type="hidden" name="id" value="${item.id}"/>
-    </c:if>
+    <main class="content">
+        <h1>
+            <c:choose>
+                <c:when test="${empty item}">New</c:when>
+                <c:otherwise>Edit</c:otherwise>
+            </c:choose>
+            Todo
+        </h1>
 
-    <label for="description">Description</label>
-    <input id="description" name="description"
-           type="text" required
-           value="<c:out value='${empty item ? "" : item.description}'/>"/>
+        <!-- Current priority: use item's priority if present, otherwise MEDIUM -->
+        <c:set var="currentPriority" value="${empty item ? 'MEDIUM' : item.priority}" />
 
-    <div class="row">
-        <label>
-            <input type="checkbox" name="completed" value="true"
-                   <c:if test="${not empty item and item.completed}">checked</c:if> />
-            Completed
-        </label>
-    </div>
+        <form action="<c:url value='/todos'/>" method="post">
+            <c:if test="${not empty item}">
+                <input type="hidden" name="id" value="${item.id}"/>
+            </c:if>
 
-    <div class="row">
-        <button class="button" type="submit">Save</button>
-        <a class="button" href="<c:url value='/todos/list'/>">Cancel</a>
-    </div>
-</form>
+            <div class="row">
+                <label for="description">Description</label>
+                <input type="text" id="description" name="description"
+                       value="<c:out value='${item.description}'/>" required/>
+            </div>
 
+            <div class="row">
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority">
+                    <option value="HIGH"
+                            <c:if test="${currentPriority == 'HIGH'}">selected</c:if>>
+                        High
+                    </option>
+                    <option value="MEDIUM"
+                            <c:if test="${currentPriority == 'MEDIUM'}">selected</c:if>>
+                        Medium
+                    </option>
+                    <option value="LOW"
+                            <c:if test="${currentPriority == 'LOW'}">selected</c:if>>
+                        Low
+                    </option>
+                </select>
+            </div>
+
+            <!-- Due date (optional) -->
+            <div class="row">
+                <label for="dueDate">Due date</label>
+                <input type="datetime-local"
+                       id="dueDate"
+                       name="dueDate"
+                       value="${not empty item ? item.dueDateInputValue : ''}"/>
+            </div>
+
+            <div class="row">
+                <label>
+                    <input type="checkbox" name="completed" value="true"
+                           <c:if test="${not empty item && item.completed}">checked</c:if> />
+                    Completed
+                </label>
+            </div>
+
+            <div class="row">
+                <button class="button primary" type="submit">Save</button>
+                <a class="button" href="<c:url value='/todos/list'/>">Cancel</a>
+            </div>
+        </form>
+    </main>
+</div>
 </body>
 </html>

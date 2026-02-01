@@ -4,19 +4,33 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
+import jakarta.servlet.http.HttpSession;
 import todo.TodoItem;
 import todo.TodoRepository;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class TodoServlet extends HttpServlet {
 
     private final TodoRepository repo = new TodoRepository();
 
+    // HTML <input type="datetime-local"> pattern: 2025-11-16T23:08
+    private static final DateTimeFormatter DTF_INPUT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setCharacterEncoding("UTF-8");
+
+        Long userId = getCurrentUserId(req);
+        if (userId == null) {
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?login=required");
+            return;
+        }
 
         String action = req.getPathInfo();
         if (action == null || action.isBlank() || "/".equals(action)) {
@@ -26,7 +40,7 @@ public class TodoServlet extends HttpServlet {
         try {
             switch (action) {
                 case "/list": {
-                    List<TodoItem> items = repo.findAll();
+                    List<TodoItem> items = repo.findAllByUser(userId);
                     req.setAttribute("items", items);
                     forward(req, resp, "/list.jsp");
                     return;
@@ -80,24 +94,32 @@ public class TodoServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
 
-        String idStr = param(req, "id");
-        String description = param(req, "description");
-        // checkbox: present => "true", absent => null => false
-        boolean completed = "true".equalsIgnoreCase(param(req, "completed"));
+        Long userId = getCurrentUserId(req);
+        if (userId == null) {
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?login=required");
+            return;
+        }
+
+        String idStr        = param(req, "id");
+        String description  = param(req, "description");
+        boolean completed   = "true".equalsIgnoreCase(param(req, "completed"));
+        String priorityStr  = param(req, "priority");
+        String dueDateStr   = param(req, "dueDate");
+
+        TodoItem.Priority priority = parsePriority(priorityStr);
+        LocalDateTime dueDate      = parseDueDate(dueDateStr);
 
         try {
             if (idStr == null || idStr.isBlank()) {
                 // create
                 if (description != null && !description.isBlank()) {
-                    long newId = repo.add(description);
-                    repo.setCompleted(newId, completed);
+                    repo.add(description, userId, completed, priority, dueDate);
                 }
             } else {
-                // update (description + completed)
+                // update
                 Long id = parseId(idStr);
                 if (id != null && description != null) {
-                    repo.updateDescription(id, description);
-                    repo.setCompleted(id, completed);
+                    repo.updateTask(id, description, completed, priority, dueDate);
                 }
             }
             redirect(req, resp, "/todos/list");
@@ -106,7 +128,14 @@ public class TodoServlet extends HttpServlet {
         }
     }
 
-    /* ----------------- helpers ----------------- */
+    // ----------------- helpers -----------------
+
+    private Long getCurrentUserId(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session == null) return null;
+        Object val = session.getAttribute("currentUserId");
+        return (val instanceof Long) ? (Long) val : null;
+    }
 
     private void forward(HttpServletRequest req, HttpServletResponse resp, String view) throws IOException {
         try {
@@ -132,6 +161,33 @@ public class TodoServlet extends HttpServlet {
     private String param(HttpServletRequest req, String name) {
         String v = req.getParameter(name);
         return (v == null) ? null : v.trim();
+    }
+
+    private TodoItem.Priority parsePriority(String value) {
+        if (value == null || value.isBlank()) {
+            return TodoItem.Priority.MEDIUM;
+        }
+        String v = value.trim().toUpperCase();
+        switch (v) {
+            case "HIGH":
+                return TodoItem.Priority.HIGH;
+            case "LOW":
+                return TodoItem.Priority.LOW;
+            default:
+                return TodoItem.Priority.MEDIUM;
+        }
+    }
+
+    private LocalDateTime parseDueDate(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDateTime.parse(value, DTF_INPUT);
+        } catch (DateTimeParseException ex) {
+            // if parsing fails, just ignore due date rather than breaking the request
+            return null;
+        }
     }
 
     private void send500(HttpServletResponse resp, Exception e) throws IOException {

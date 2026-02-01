@@ -12,18 +12,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- If Tomcat complains about Java 23, change these to 17 or 21 -->
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
 
         <!-- versions -->
         <junit.version>5.11.0</junit.version>
-        <servlet.version>6.0.0</servlet.version>          <!-- Tomcat 10.1 -->
+        <servlet.version>6.0.0</servlet.version>          <!-- Tomcat 10.1+ -->
         <jersey.version>4.0.0-M1</jersey.version>
         <hibernate.version>6.5.2.Final</hibernate.version>
         <jstl.version>3.0.1</jstl.version>
     </properties>
 
-    <!-- Ensure Maven Central is used -->
     <repositories>
         <repository>
             <id>central</id>
@@ -31,6 +32,7 @@
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
+
     <pluginRepositories>
         <pluginRepository>
             <id>central</id>
@@ -48,7 +50,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jersey (REST) -->
+        <!-- Jersey (REST) - fine to leave, even if not used yet -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
@@ -82,7 +84,7 @@
             <version>9.0.0</version>
         </dependency>
 
-        <!-- JSP + JSTL for JSP views -->
+        <!-- JSP + JSTL (needed for <c:...> tags in the JSPs I gave you) -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
@@ -94,7 +96,7 @@
             <version>${jstl.version}</version>
         </dependency>
 
-        <!-- Help IntelliJ resolve JSP at edit time (Tomcat provides these at runtime) -->
+        <!-- JSP API (Tomcat provides it at runtime) -->
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
@@ -102,7 +104,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Tests (JUnit 5) -->
+        <!-- Tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -124,6 +126,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

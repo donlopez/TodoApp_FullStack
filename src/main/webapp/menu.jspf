@@ -1,0 +1,26 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<nav class="sidebar">
+    <h2>Todo App</h2>
+
+    <ul>
+        <li><a href="<c:url value='/'/>">Home</a></li>
+        <li><a href="<c:url value='/todos/list'/>">Todo List</a></li>
+        <li><a href="<c:url value='/todos/new'/>">New Todo</a></li>
+    </ul>
+
+    <c:choose>
+        <c:when test="${not empty sessionScope.currentUserName}">
+            <div class="user-box">
+                Signed in as:<br/>
+                <strong>${sessionScope.currentUserName}</strong><br/>
+                <a href="<c:url value='/logout'/>">Logout</a>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="user-box">
+                Not signed in
+            </div>
+        </c:otherwise>
+    </c:choose>
+</nav>
