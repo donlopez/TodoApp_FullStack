@@ -13,9 +13,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- If Tomcat complains about Java 23, change these to 17 or 21 -->
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
+        <!-- Java toolchain / compiler target -->
+        <!-- You are running JDK 17, so compile to 17 -->
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <!-- versions -->
         <junit.version>5.11.0</junit.version>
@@ -84,7 +86,7 @@
             <version>9.0.0</version>
         </dependency>
 
-        <!-- JSP + JSTL (needed for <c:...> tags in the JSPs I gave you) -->
+        <!-- JSP + JSTL -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
